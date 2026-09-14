@@ -100,6 +100,35 @@
   .mini-step{padding:6px 9px;border-radius:999px;background:#F3F6FA;color:#637188;border:1px solid var(--line);font-size:11px;font-weight:700}
   .mini-step.active{background:var(--blue-soft);color:#245C96;border-color:#BFD7F3}
 
+  /* Stage-specific workspace: same system shell, different learning task */
+  .stage-view{display:none;animation:stageFade .18s ease}
+  .stage-view.active{display:block}
+  @keyframes stageFade{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:none}}
+  .stage-section-title{font-size:13px;font-weight:850;color:var(--navy);margin:2px 0 8px}
+  .stage-section-note{font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .problem-preview{border:1px solid #D8E4F2;background:#F8FBFF;border-radius:13px;padding:12px;margin-bottom:12px}
+  .preview-title{font-size:15px;font-weight:850;color:var(--navy);margin-bottom:5px}
+  .preview-desc{font-size:12.5px;color:#40516B;line-height:1.55;white-space:pre-wrap}
+  .preview-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .preview-chip{background:#fff;border:1px solid #DCE6F2;border-radius:10px;padding:8px 9px}
+  .preview-chip .small-label{display:block;font-size:10.5px;color:var(--muted);font-weight:750;margin-bottom:3px}
+  .preview-chip span:last-child{font-size:11.5px;color:#334963;font-weight:700}
+  .evaluation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 12px}
+  .evaluation-item{background:#FBFCFE;border:1px solid #DCE6F2;border-radius:11px;padding:10px}
+  .evaluation-item strong{display:block;font-size:12px;color:var(--navy);margin-bottom:4px}
+  .evaluation-item span{font-size:11px;color:var(--muted);line-height:1.45}
+  .revision-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .revision-card{border:1px solid #DCE6F2;border-radius:13px;padding:12px;background:#FBFCFE}
+  .revision-card.current{background:#FFF9F3;border-color:#F0D8BE}
+  .revision-card h4{margin:0 0 8px;font-size:13px;color:var(--navy)}
+  .original-text{font-size:12px;color:#45566E;line-height:1.55;white-space:pre-wrap}
+  .revision-feedback{margin-top:10px;background:#F7FAFD;border:1px solid #DCE6F2;border-radius:11px;padding:10px;font-size:12px;color:#40516B;line-height:1.5}
+  .stage-nav-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .stage-callout{border-left:4px solid var(--blue);background:var(--blue-soft);border-radius:8px;padding:9px 11px;font-size:11.5px;color:#375674;margin:8px 0 12px}
+
+  @media(max-width:900px){.field-grid,.preview-meta,.revision-grid,.evaluation-grid{grid-template-columns:1fr}}
+
   /* Analysis + support */
   .analysis-box{background:linear-gradient(135deg,#F5FAFF,#F7FCFB);border:1px solid #D6E8F5;border-radius:14px;padding:12px;margin-bottom:12px}
   .analysis-title{font-size:12px;font-weight:850;color:var(--navy);margin-bottom:9px}
@@ -122,6 +151,42 @@
   .typing{font-size:11px;color:var(--muted);margin-top:6px;display:none}
   .footer-note{font-size:10.5px;color:#8592A5;margin-top:8px;line-height:1.4}
 
+  /* Adaptive Support Module routing — mirrors the presentation architecture */
+  .support-route{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+  .route-card{border:1px solid var(--line);border-radius:11px;padding:9px 10px;background:#FBFCFE;display:flex;flex-direction:column;gap:3px}
+  .route-card strong{font-size:12px;color:var(--navy)}
+  .route-card span{font-size:10.5px;color:var(--muted)}
+  .active-route{background:var(--orange-soft);border-color:#F0D2B6}
+  .care-route{background:var(--teal-soft);border-color:#CDE6E1}
+  .support-ai-heading{margin-top:2px}
+  .support-goals-bar{max-width:1500px;width:calc(100% - 44px);margin:0 auto 18px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 8px 20px rgba(36,78,131,.06);display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+  .goals-title{font-size:12px;font-weight:850;color:#5E3D9C;margin-right:2px}
+  .goal-chip{font-size:11px;font-weight:750;color:#5A4A7A;background:#F6F1FF;border:1px solid #E2D5F7;border-radius:999px;padding:6px 9px}
+
+  /* Independent Emotion Care AI */
+  .care-overlay{position:fixed;inset:0;background:rgba(12,28,52,.58);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:24px;z-index:200}
+  .care-overlay.show{display:flex}
+  .care-modal{width:min(680px,94vw);max-height:86vh;background:#fff;border:1px solid #BFE3DD;border-radius:22px;box-shadow:0 28px 80px rgba(17,51,84,.28);overflow:hidden;display:flex;flex-direction:column}
+  .care-head{padding:16px 18px;background:linear-gradient(135deg,#EAF8F5,#EEF6FF);border-bottom:1px solid #D7E8E5;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .care-identity{display:flex;align-items:center;gap:11px}
+  .care-avatar{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,var(--teal),#69C8BD);display:grid;place-items:center;color:#fff;font-weight:900;font-size:13px;box-shadow:0 8px 18px rgba(42,157,143,.22)}
+  .care-title{font-size:17px;font-weight:850;color:#176A62}
+  .care-subtitle{font-size:11.5px;color:#617588;margin-top:2px}
+  .care-close{border:1px solid #CFE0E8;background:#fff;color:#52667C;width:34px;height:34px;border-radius:10px;cursor:pointer;font-weight:900}
+  .care-context{display:flex;gap:8px;flex-wrap:wrap;padding:11px 16px;background:#FBFDFE;border-bottom:1px solid #E7EEF5}
+  .care-chip{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;background:#F0F7F6;color:#26776E;border:1px solid #CDE6E1}
+  .care-body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:9px;min-height:220px;max-height:430px;background:#FCFEFF}
+  .care-msg{max-width:88%;padding:10px 12px;border-radius:13px;font-size:13px;line-height:1.55}
+  .care-msg.ai{align-self:flex-start;background:#EEF9F7;border:1px solid #CDE9E4;color:#245B56;border-top-left-radius:3px}
+  .care-msg.user{align-self:flex-end;background:#EEF6FF;border:1px solid #C7DCF5;color:#254E7A;border-top-right-radius:3px}
+  .care-msg.system{align-self:center;background:#F5F7FA;color:#78869A;font-size:11px;max-width:100%}
+  .care-footer{padding:13px 16px 16px;border-top:1px solid #E3ECF4;background:#fff}
+  .care-input-row{display:flex;gap:8px}
+  .care-input-row input{margin:0}
+  .care-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .care-ready{background:var(--teal);color:#fff}
+  .care-thinking{font-size:11px;color:#718196;display:none}
+
   @media(max-width:1180px){.layout{grid-template-columns:280px minmax(0,1fr)}.support-panel{grid-column:1/-1}.chat{height:250px}.module-strip{display:none}}
   @media(max-width:780px){.layout{grid-template-columns:1fr;padding:10px}.stagebar{grid-template-columns:1fr 1fr;padding:10px}.topbar{padding:12px}.brand{font-size:15px}.monitor-panel,.support-panel{grid-column:auto}.status-grid{grid-template-columns:1fr 1fr}}
 </style>
@@ -133,13 +198,13 @@
       <div class="brand-mark">AI</div>
       <div>
         <div class="brand">Emotion-Aware Adaptive Problem-Posing & Solving System</div>
-        <div class="subtitle">Conference demo — focused on emotion sensing, learning-state analysis, and adaptive support</div>
+        <div class="subtitle">Conference demo — Emotion Sensing, Learning-State Analysis, and Adaptive Support</div>
       </div>
     </div>
     <div class="module-strip" aria-label="Core system modules">
-      <div class="module-pill m1">1. Emotion Sensing</div>
-      <div class="module-pill m2">2. Learning-State Analysis</div>
-      <div class="module-pill m3">3. Adaptive Support</div>
+      <div class="module-pill m1">1. Emotion Sensing Module</div>
+      <div class="module-pill m2">2. Learning-State Analysis Module</div>
+      <div class="module-pill m3">3. Adaptive Support Module</div>
     </div>
   </header>
 
@@ -155,7 +220,7 @@
       <div class="panel-head">
         <div>
           <div class="panel-kicker">Module 1</div>
-          <div class="panel-title">Emotion Sensing</div>
+          <div class="panel-title">Emotion Sensing Module</div>
         </div>
         <span id="modelStatus" style="font-size:11px;color:#8996A8">Model idle</span>
       </div>
@@ -183,7 +248,9 @@
           <div class="metric"><span>Run attempts</span><span id="metricAttempts">0</span></div>
           <div class="metric"><span>Revisions</span><span id="metricRevisions">0</span></div>
           <div class="metric"><span>Time on task</span><span id="metricTime">00:00</span></div>
-          <div class="metric"><span>Interaction state</span><span id="metricInteraction">Normal</span></div>
+          <div class="metric"><span>Interaction behavior</span><span id="metricInteraction">Normal</span></div>
+          <div class="metric"><span>Text input signal</span><span id="metricTextSignal">No negative signal</span></div>
+          <div class="metric"><span>Trigger condition</span><span id="metricTrigger">Not met</span></div>
         </div>
 
         <details class="demo">
@@ -194,6 +261,7 @@
             <button class="btn btn-ghost" data-sim="angry">Angry</button>
             <button class="btn btn-ghost" data-sim="fearful">Fearful</button>
             <button class="btn btn-ghost" data-sim="happy">Happy</button>
+            <button class="btn btn-teal" id="btnDemoEmotionCare">Trigger Emotion Care AI</button>
           </div>
         </details>
       </div>
@@ -215,29 +283,116 @@
           </div>
         </div>
 
-        <label for="problemTitle">Problem title</label>
-        <input id="problemTitle" type="text" value="Bus Fare Discount" placeholder="Enter a clear problem title" />
+        <!-- POSE: create and clarify the problem -->
+        <div class="stage-view active" id="viewPose" data-stage-view="pose">
+          <div class="stage-section-title">Build the problem</div>
+          <div class="stage-section-note">Define a meaningful situation, the conditions, and what the program should produce.</div>
 
-        <label for="problemDesc">Problem description</label>
-        <textarea id="problemDesc" rows="5" placeholder="Describe the problem situation, inputs, and expected output.">A bus company gives a 20% discount to passengers aged 65 or older. Ask the user for age and ticket price, then print the final fare.</textarea>
+          <label for="problemTitle">Problem title</label>
+          <input id="problemTitle" type="text" value="Bus Fare Discount" placeholder="Enter a clear problem title" />
 
-        <label for="codeEditor">Reference solution / solving attempt (Python)</label>
-        <textarea id="codeEditor" class="editor" spellcheck="false">age = int(input("Age: "))
+          <label for="problemDesc">Problem description</label>
+          <textarea id="problemDesc" rows="5" placeholder="Describe the situation and task.">A bus company gives a 20% discount to passengers aged 65 or older. Ask the user for age and ticket price, then print the final fare.</textarea>
+
+          <div class="field-grid">
+            <div>
+              <label for="problemConditions">Inputs / conditions</label>
+              <textarea id="problemConditions" rows="3" placeholder="What information and conditions are needed?">Input: age and ticket price. Condition: passengers aged 65 or older receive a 20% discount.</textarea>
+            </div>
+            <div>
+              <label for="problemExpectedOutput">Expected output</label>
+              <textarea id="problemExpectedOutput" rows="3" placeholder="What should the program output?">Print the final fare after applying the discount when needed.</textarea>
+            </div>
+          </div>
+          <div class="stage-callout">Learning Support AI can help clarify the idea, conditions, and solvability without writing the whole problem for the learner.</div>
+          <div class="stage-nav-actions">
+            <button class="btn btn-primary" id="btnPoseReady">Continue to Solve</button>
+          </div>
+        </div>
+
+        <!-- SOLVE: test the learner's own problem -->
+        <div class="stage-view" id="viewSolve" data-stage-view="solve">
+          <div class="stage-section-title">Solve your own problem</div>
+          <div class="stage-section-note">The posed problem is shown as a reference while the learner tests whether it can actually be solved.</div>
+          <div class="problem-preview">
+            <div class="preview-title" id="solveProblemTitle">Bus Fare Discount</div>
+            <div class="preview-desc" id="solveProblemDesc"></div>
+            <div class="preview-meta">
+              <div class="preview-chip"><span class="small-label">Inputs / conditions</span><span id="solveConditions"></span></div>
+              <div class="preview-chip"><span class="small-label">Expected output</span><span id="solveExpectedOutput"></span></div>
+            </div>
+          </div>
+
+          <label for="codeEditor">Solving attempt (Python)</label>
+          <textarea id="codeEditor" class="editor" spellcheck="false">age = int(input("Age: "))
 price = float(input("Ticket price: "))
 
 if age >= 65:
     price = price * 0.8
 
 print("Final fare:", price)</textarea>
-
-        <div class="workspace-actions">
-          <button class="btn btn-primary" id="btnRun">Run Python</button>
-          <button class="btn btn-teal" id="btnEvaluate">Evaluate Problem</button>
-          <button class="btn btn-orange" id="btnRevision">Mark as Revised</button>
-          <span class="py-status" id="pyStatus">Python engine loading…</span>
+          <div class="workspace-actions">
+            <button class="btn btn-primary" id="btnRun">Run Python</button>
+            <span class="py-status" id="pyStatus">Python engine loading…</span>
+          </div>
+          <div class="output" id="output">Output will appear here.</div>
+          <div class="stage-nav-actions">
+            <button class="btn btn-teal" id="btnSolveReady">Continue to Evaluate</button>
+          </div>
         </div>
-        <div class="output" id="output">Output will appear here.</div>
-        <div class="feedback-card" id="evaluationFeedback"></div>
+
+        <!-- EVALUATE: inspect clarity, solvability, and consistency -->
+        <div class="stage-view" id="viewEvaluate" data-stage-view="evaluate">
+          <div class="stage-section-title">Evaluate the posed problem</div>
+          <div class="stage-section-note">The system focuses attention on three quality checks before revision.</div>
+          <div class="problem-preview">
+            <div class="preview-title" id="evaluateProblemTitle">Bus Fare Discount</div>
+            <div class="preview-desc" id="evaluateProblemDesc"></div>
+          </div>
+          <div class="evaluation-grid">
+            <div class="evaluation-item"><strong>Clarity</strong><span>Are the situation, inputs, conditions, and expected output clear?</span></div>
+            <div class="evaluation-item"><strong>Solvability</strong><span>Can the learner actually solve and test the problem?</span></div>
+            <div class="evaluation-item"><strong>Consistency</strong><span>Does the solution match every condition in the problem?</span></div>
+          </div>
+          <div class="workspace-actions">
+            <button class="btn btn-teal" id="btnEvaluate">Evaluate Problem</button>
+          </div>
+          <div class="feedback-card" id="evaluationFeedback"></div>
+          <div class="stage-nav-actions">
+            <button class="btn btn-orange" id="btnEvaluateReady">Continue to Revise</button>
+          </div>
+        </div>
+
+        <!-- REVISE: compare the current version with the learner's revision -->
+        <div class="stage-view" id="viewRevise" data-stage-view="revise">
+          <div class="stage-section-title">Revise and improve the problem</div>
+          <div class="stage-section-note">Use the evaluation and solving experience to improve one or more parts of the problem.</div>
+          <div class="revision-grid">
+            <div class="revision-card">
+              <h4>Current version</h4>
+              <div class="original-text"><strong id="revOriginalTitle">Bus Fare Discount</strong></div>
+              <div class="original-text" id="revOriginalDesc"></div>
+              <div class="original-text" id="revOriginalConditions"></div>
+              <div class="original-text" id="revOriginalOutput"></div>
+            </div>
+            <div class="revision-card current">
+              <h4>Revised version</h4>
+              <label for="revisedTitle">Problem title</label>
+              <input id="revisedTitle" type="text" />
+              <label for="revisedDesc">Problem description</label>
+              <textarea id="revisedDesc" rows="4"></textarea>
+              <label for="revisedConditions">Inputs / conditions</label>
+              <textarea id="revisedConditions" rows="3"></textarea>
+              <label for="revisedExpectedOutput">Expected output</label>
+              <textarea id="revisedExpectedOutput" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="revision-feedback" id="revisionFeedback">Evaluation feedback will appear here after the Evaluate stage.</div>
+          <div class="stage-nav-actions">
+            <button class="btn btn-orange" id="btnRevision">Save Revision</button>
+            <button class="btn btn-ghost" id="btnRestartCycle">Return to Pose</button>
+          </div>
+        </div>
 
         <div class="mini-flow">
           <span class="mini-step active" data-mini="pose">Pose</span>
@@ -251,13 +406,13 @@ print("Final fare:", price)</textarea>
     <aside class="panel support-panel">
       <div class="panel-head">
         <div>
-          <div class="panel-kicker">Modules 2 & 3</div>
-          <div class="panel-title">Learning-State Analysis & Adaptive Support</div>
+          <div class="panel-kicker">Core System</div>
+          <div class="panel-title">Learning-State Analysis Module</div>
         </div>
       </div>
       <div class="panel-body">
         <div class="analysis-box">
-          <div class="analysis-title">Current Learning-State Analysis</div>
+          <div class="analysis-title">System Interpretation</div>
           <div class="signal-row"><div class="key">Learning stage</div><div class="val2" id="analysisStage">Pose</div></div>
           <div class="signal-row"><div class="key">Learning progress</div><div class="val2" id="analysisProgress">Problem draft in progress</div></div>
           <div class="signal-row"><div class="key">Facial expression</div><div class="val2" id="analysisEmotion">Not detected</div></div>
@@ -265,25 +420,72 @@ print("Final fare:", price)</textarea>
           <div class="need-box"><strong>Current learning need</strong><span id="analysisNeed">Problem-posing scaffold</span></div>
         </div>
 
-        <div class="analysis-title">Adaptive AI Support</div>
+        <div class="analysis-title">Adaptive Support Module</div>
+        <div class="support-route">
+          <div class="route-card active-route"><strong>Learning Support AI</strong><span>Regular learning support</span></div>
+          <div class="route-card care-route"><strong>Emotion Care AI</strong><span>Activated only when needed</span></div>
+        </div>
+
+        <div class="analysis-title support-ai-heading">Learning Support AI</div>
         <div class="chat" id="chatBox">
-          <div class="msg system">The system combines learning progress with emotional state to decide the next support strategy.</div>
-          <div class="msg ai">I’m ready to support your problem-posing and solving process. I will avoid giving the full answer and focus on hints, questions, feedback, and encouragement.</div>
+          <div class="msg system">This AI focuses on the learning task. Emotion care is handled by a separate AI that appears only when needed.</div>
+          <div class="msg ai">I can help with problem posing, solving, evaluation, and revision. I will use hints, examples, and reflection questions instead of giving the full answer.</div>
         </div>
         <div class="quick-actions">
           <button class="btn btn-ghost" data-support="hint">Hint</button>
+          <button class="btn btn-ghost" data-support="example">Example</button>
           <button class="btn btn-ghost" data-support="reflect">Reflect</button>
-          <button class="btn btn-ghost" data-support="encourage">Encourage</button>
         </div>
         <div class="chat-input-row">
           <input id="chatInput" placeholder="Ask the AI tutor…" />
           <button class="btn btn-primary send-btn" id="btnSend">Send</button>
         </div>
-        <div class="typing" id="typing">AI tutor is adapting its response…</div>
-        <div class="footer-note">Live facial-expression recognition uses face-api.js. The camera stays in the browser; only the inferred expression label is used as context for adaptive support.</div>
+        <div class="typing" id="typing">Learning Support AI is preparing guidance…</div>
+        <div class="footer-note">The Adaptive Support Module routes regular learning support to the Learning Support AI. When a trigger condition is met, a separate Emotion Care AI appears.</div>
       </div>
     </aside>
   </main>
+
+  <div class="support-goals-bar" aria-label="Support Goals">
+    <span class="goals-title">Support Goals</span>
+    <span class="goal-chip">Clearer problems</span>
+    <span class="goal-chip">Better revision</span>
+    <span class="goal-chip">Sustained engagement</span>
+    <span class="goal-chip">Need-based support</span>
+  </div>
+</div>
+
+<div class="care-overlay" id="emotionCareOverlay" role="dialog" aria-modal="true" aria-labelledby="emotionCareTitle">
+  <div class="care-modal">
+    <div class="care-head">
+      <div class="care-identity">
+        <div class="care-avatar">CARE<br>AI</div>
+        <div>
+          <div class="care-title" id="emotionCareTitle">Emotion Care AI</div>
+          <div class="care-subtitle">Activated only when additional emotional support may be needed</div>
+        </div>
+      </div>
+      <button class="care-close" id="btnCloseEmotionCare" title="Close">×</button>
+    </div>
+    <div class="care-context">
+      <span class="care-chip" id="careEmotionChip">Expression: --</span>
+      <span class="care-chip" id="careStageChip">Stage: --</span>
+      <span class="care-chip" id="careReasonChip">Trigger condition: --</span>
+    </div>
+    <div class="care-body" id="careChatBox">
+      <div class="care-msg system">The Learning Support AI remains responsible for the learning task. This separate space provides emotional check-in, encouragement, and support for returning to the task.</div>
+    </div>
+    <div class="care-footer">
+      <div class="care-input-row">
+        <input id="careInput" placeholder="Tell the Emotion Care AI how you feel or what is making the task difficult…" />
+        <button class="btn btn-teal" id="btnSendCare">Send</button>
+      </div>
+      <div class="care-actions">
+        <span class="care-thinking" id="careThinking">Emotion Care AI is responding…</span>
+        <button class="btn care-ready" id="btnResumeLearning">I’m ready to continue</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -307,10 +509,15 @@ const state = {
   pyodide: null,
   pyReady: false,
   lastAutoSupportAt: 0,
+  lastEmotionCareAt: 0,
+  emotionCareOpen: false,
   negativeEmotionStreak: 0,
   simulatedEmotion: null,
   lastEvaluation: '',
-  chatHistory: []
+  chatHistory: [],
+  textSignal: 'No negative signal',
+  currentTrigger: 'Not met',
+  revisionInitialized: false
 };
 
 const $ = id => document.getElementById(id);
@@ -333,14 +540,54 @@ const stages = {
   }
 };
 
+function getProblemData(){
+  return {
+    title: $('problemTitle').value.trim(),
+    description: $('problemDesc').value.trim(),
+    conditions: $('problemConditions').value.trim(),
+    expectedOutput: $('problemExpectedOutput').value.trim(),
+    code: $('codeEditor').value.trim()
+  };
+}
+
+function syncStageContent(){
+  const p=getProblemData();
+  $('solveProblemTitle').textContent=p.title || 'Untitled problem';
+  $('solveProblemDesc').textContent=p.description || 'No problem description yet.';
+  $('solveConditions').textContent=p.conditions || 'Not specified';
+  $('solveExpectedOutput').textContent=p.expectedOutput || 'Not specified';
+  $('evaluateProblemTitle').textContent=p.title || 'Untitled problem';
+  $('evaluateProblemDesc').textContent=p.description || 'No problem description yet.';
+  $('revOriginalTitle').textContent=p.title || 'Untitled problem';
+  $('revOriginalDesc').textContent=p.description || 'No problem description yet.';
+  $('revOriginalConditions').textContent='Inputs / conditions: '+(p.conditions || 'Not specified');
+  $('revOriginalOutput').textContent='Expected output: '+(p.expectedOutput || 'Not specified');
+  if(state.lastEvaluation){
+    $('revisionFeedback').innerHTML=marked.parse(state.lastEvaluation);
+  }
+}
+
+function prepareRevisionFields(force=false){
+  if(state.revisionInitialized && !force) return;
+  const p=getProblemData();
+  $('revisedTitle').value=p.title;
+  $('revisedDesc').value=p.description;
+  $('revisedConditions').value=p.conditions;
+  $('revisedExpectedOutput').value=p.expectedOutput;
+  state.revisionInitialized=true;
+}
+
 function setStage(stage){
   state.stage = stage;
   document.querySelectorAll('.stage').forEach(el=>el.classList.toggle('active', el.dataset.stage===stage));
   document.querySelectorAll('.mini-step').forEach(el=>el.classList.toggle('active', el.dataset.mini===stage));
+  document.querySelectorAll('[data-stage-view]').forEach(el=>el.classList.toggle('active',el.dataset.stageView===stage));
   $('stageBadge').textContent = 'Stage: ' + cap(stage);
   $('workspaceTitle').textContent = stages[stage].title;
   $('workspaceNote').textContent = stages[stage].note;
   $('metricStage').textContent = cap(stage);
+  syncStageContent();
+  if(stage==='revise') prepareRevisionFields();
   analyzeLearningState();
 }
 
@@ -353,7 +600,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Backspace') state.backspaces++;
   state.lastInputAt = Date.now();
 });
-document.addEventListener('input',()=>{ state.lastInputAt = Date.now(); analyzeLearningState(); });
+document.addEventListener('input',()=>{ state.lastInputAt = Date.now(); syncStageContent(); analyzeLearningState(); });
 
 function inferLearningProgress(){
   const title = $('problemTitle').value.trim();
@@ -380,19 +627,19 @@ function inferBehavior(){
 }
 
 function inferNeed(){
-  const emotion = state.emotion;
   const behavior = inferBehavior();
   const title = $('problemTitle').value.trim();
   const desc = $('problemDesc').value.trim();
 
-  if(['angry','sad','fearful'].includes(emotion) && (state.runErrors>=1 || behavior!=='Normal')) return 'Affective + strategic support';
-  if(['sad','fearful'].includes(emotion)) return 'Gentle scaffold + encouragement';
-  if(emotion==='angry') return 'Short, step-by-step support';
   if(state.stage==='pose'){
     if(!title || desc.length<35) return 'Idea generation and condition clarification';
     return 'Check clarity and solvability';
   }
-  if(state.stage==='solve') return state.runErrors>0 ? 'Debugging guidance' : 'Check whether the problem works';
+  if(state.stage==='solve'){
+    if(state.runErrors>0) return 'Debugging guidance';
+    if(behavior==='Long pause') return 'Small-step strategic guidance';
+    return 'Check whether the problem works';
+  }
   if(state.stage==='evaluate') return 'Evaluation and reflection prompts';
   return 'Revision guidance';
 }
@@ -407,6 +654,8 @@ function analyzeLearningState(){
   $('analysisBehavior').textContent = behavior;
   $('analysisNeed').textContent = need;
   $('metricInteraction').textContent = behavior;
+  $('metricTextSignal').textContent = state.textSignal;
+  $('metricTrigger').textContent = state.currentTrigger;
   return {progress,behavior,need};
 }
 
@@ -474,9 +723,11 @@ function updateEmotion(label,score,simulated){
   const negative = ['sad','angry','fearful'].includes(label);
   state.negativeEmotionStreak = negative ? state.negativeEmotionStreak+1 : 0;
   analyzeLearningState();
-  if(state.negativeEmotionStreak>=4 && Date.now()-state.lastAutoSupportAt>30000){
-    state.lastAutoSupportAt = Date.now();
-    requestAdaptiveSupport('auto');
+  if(state.negativeEmotionStreak>=4 && Date.now()-state.lastEmotionCareAt>30000){
+    state.lastEmotionCareAt = Date.now();
+    state.currentTrigger = 'Sustained negative emotions';
+    analyzeLearningState();
+    openEmotionCareIntervention('sustained negative emotions');
   }
 }
 
@@ -529,6 +780,12 @@ builtins.input = custom_input
     $('output').textContent += '\nError:\n'+err;
   }
   analyzeLearningState();
+  if(state.runErrors>=2 && ['sad','angry','fearful'].includes(state.emotion) && Date.now()-state.lastEmotionCareAt>30000){
+    state.lastEmotionCareAt=Date.now();
+    state.currentTrigger = 'Repeated failures / stuck pattern';
+    analyzeLearningState();
+    openEmotionCareIntervention('repeated failures or stuck pattern');
+  }
 }
 $('btnRun').addEventListener('click',runPython);
 
@@ -546,6 +803,8 @@ function contextSnapshot(){
     need: analysis.need,
     title: $('problemTitle').value.trim(),
     description: $('problemDesc').value.trim(),
+    conditions: $('problemConditions').value.trim(),
+    expectedOutput: $('problemExpectedOutput').value.trim(),
     code: $('codeEditor').value.trim()
   };
 }
@@ -560,8 +819,9 @@ function addMsg(role,text){
 }
 
 function localFallback(intent,ctx){
-  if(intent==='encourage' || ['sad','fearful','angry'].includes(ctx.emotion)){
-    return `You are still making progress. Let’s focus on one small step first: ${ctx.stage==='pose'?'check whether the problem has a clear input and output':ctx.stage==='solve'?'test one simple case':ctx.stage==='evaluate'?'check one condition at a time':'revise only one part before changing anything else'}.`;
+  if(intent==='example'){
+    if(ctx.stage==='pose') return 'Example structure: give a short real-life situation, clearly state the input, and explain the expected output. Keep the numbers and conditions different from your final problem.';
+    return 'Try a small test case with one simple input first, then compare the expected output with the actual output.';
   }
   if(ctx.stage==='pose') return 'Try checking three things: What is the input? What should the program output? Can a classmate solve the problem from your description alone?';
   if(ctx.stage==='solve') return 'Test a simple case first. If the result is wrong, compare the expected output with the value your code actually produces.';
@@ -580,20 +840,21 @@ async function callAdaptiveAI(prompt){
 async function requestAdaptiveSupport(intent='auto',userText=''){
   const ctx=contextSnapshot();
   $('typing').style.display='block';
-  const prompt=`You are an emotion-aware adaptive tutor for beginner university programming students.
+  const prompt=`You are the main Learning Support AI for beginner university programming students.
 Current learning stage: ${ctx.stage}
 Current learning progress: ${ctx.progress}
-Detected facial expression: ${ctx.emotion} (confidence ${Math.round(ctx.confidence*100)}%)
 Interaction pattern: ${ctx.behavior}
 Current inferred learning need: ${ctx.need}
 Run attempts: ${ctx.attempts}; run errors: ${ctx.runErrors}; revisions: ${ctx.revisions}
 Problem title: ${ctx.title}
 Problem description: ${ctx.description}
+Inputs / conditions: ${ctx.conditions}
+Expected output: ${ctx.expectedOutput}
 Student code: ${ctx.code}
 Support request: ${intent}
 Student message: ${userText || '(none)'}
 
-Give ONE short adaptive response in simple English, maximum 55 words. Do not give a complete solution. Choose the support style based on both learning progress and emotional state. Use a guiding question, a small hint, reflection prompt, or brief encouragement as appropriate.`;
+Give ONE short learning-focused response in simple English, maximum 55 words. Do not give the complete solution. Use a guiding question, a small hint, an example structure, or a reflection prompt. Do NOT provide emotional counseling; a separate Emotion Care AI handles emotional support.`;
   try{
     const reply=await callAdaptiveAI(prompt);
     addMsg('ai',reply);
@@ -605,6 +866,81 @@ Give ONE short adaptive response in simple English, maximum 55 words. Do not giv
   }
 }
 
+function careAddMsg(role,text){
+  const div=document.createElement('div');
+  div.className='care-msg '+role;
+  if(role==='ai') div.innerHTML=marked.parse(text);
+  else div.textContent=text;
+  $('careChatBox').appendChild(div);
+  $('careChatBox').scrollTop=$('careChatBox').scrollHeight;
+}
+
+function emotionCareFallback(ctx,reason){
+  const e=ctx.emotion;
+  if(e==='angry') return `I noticed this may be getting frustrating. You do not need to solve everything at once. Let’s pause for a moment, then choose just one small part of the ${ctx.stage} stage to work on.`;
+  if(e==='fearful') return `This looks difficult right now, and that is okay. You can slow down. Let’s focus on one small step first, and you can return to the main Learning Support AI when you feel ready.`;
+  if(e==='sad') return `It looks like your energy may be dropping. You have already made progress. Take a short pause, then continue with one manageable step instead of trying to fix everything at once.`;
+  return `I noticed you may need a short emotional reset. Take a moment, tell me what feels difficult, and we can help you return to the learning task when you are ready.`;
+}
+
+async function callEmotionCareAI(ctx,reason,userText=''){
+  const prompt=`You are a separate Emotion Care AI in a university programming learning system.\nYour role is emotional care, not ordinary tutoring.\nDetected facial expression: ${ctx.emotion} (confidence ${Math.round(ctx.confidence*100)}%)\nCurrent learning stage: ${ctx.stage}\nLearning progress: ${ctx.progress}\nInteraction pattern: ${ctx.behavior}\nRun attempts: ${ctx.attempts}; run errors: ${ctx.runErrors}; revisions: ${ctx.revisions}\nTrigger reason: ${reason}\nStudent message: ${userText || '(none)'}\n\nRespond in simple, warm English, maximum 55 words. Acknowledge the learner's possible feeling without overclaiming. Help the learner regulate frustration or anxiety and return to learning. You may offer one very small next step, but do not solve the programming problem.`;
+  return await callAdaptiveAI(prompt);
+}
+
+async function openEmotionCareIntervention(reason='emotion signal'){
+  if(state.emotionCareOpen) return;
+  state.emotionCareOpen=true;
+  const ctx=contextSnapshot();
+  $('careEmotionChip').textContent=`Expression: ${ctx.emotion==='not detected'?'Unknown':cap(ctx.emotion)}`;
+  $('careStageChip').textContent=`Stage: ${cap(ctx.stage)}`;
+  $('careReasonChip').textContent=`Trigger condition: ${reason}`;
+  $('emotionCareOverlay').classList.add('show');
+  $('careChatBox').innerHTML='<div class="care-msg system">The Learning Support AI remains responsible for the learning task. This separate space provides emotional check-in, encouragement, and support for returning to the task.</div>';
+  $('careThinking').style.display='inline';
+  try{
+    const reply=await callEmotionCareAI(ctx,reason);
+    careAddMsg('ai',reply);
+  }catch(err){
+    careAddMsg('ai',emotionCareFallback(ctx,reason));
+    console.warn('Emotion Care AI fallback used',err);
+  }finally{
+    $('careThinking').style.display='none';
+  }
+}
+
+function closeEmotionCareIntervention(){
+  $('emotionCareOverlay').classList.remove('show');
+  state.emotionCareOpen=false;
+  state.negativeEmotionStreak=0;
+  state.lastEmotionCareAt=Date.now();
+  state.currentTrigger='Monitoring';
+  analyzeLearningState();
+}
+
+async function sendCareMessage(){
+  const v=$('careInput').value.trim();
+  if(!v) return;
+  $('careInput').value='';
+  careAddMsg('user',v);
+  $('careThinking').style.display='inline';
+  const ctx=contextSnapshot();
+  try{
+    const reply=await callEmotionCareAI(ctx,'follow-up conversation',v);
+    careAddMsg('ai',reply);
+  }catch(err){
+    careAddMsg('ai',emotionCareFallback(ctx,'follow-up conversation'));
+  }finally{
+    $('careThinking').style.display='none';
+  }
+}
+
+$('btnCloseEmotionCare').addEventListener('click',closeEmotionCareIntervention);
+$('btnResumeLearning').addEventListener('click',closeEmotionCareIntervention);
+$('btnSendCare').addEventListener('click',sendCareMessage);
+$('careInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendCareMessage();}});
+$('btnDemoEmotionCare').addEventListener('click',()=>{state.currentTrigger='Presenter demo';analyzeLearningState();openEmotionCareIntervention('presenter demo');});
+
 document.querySelectorAll('[data-support]').forEach(btn=>btn.addEventListener('click',()=>requestAdaptiveSupport(btn.dataset.support)));
 
 async function sendChat(){
@@ -612,10 +948,29 @@ async function sendChat(){
   if(!v) return;
   $('chatInput').value='';
   addMsg('user',v);
+  const lower=v.toLowerCase();
+  const negativeText=/give up|can't do this|cannot do this|so frustrated|hate this|too hard|i'm done|i am done/.test(lower);
+  state.textSignal = negativeText ? 'Negative language detected' : 'No negative signal';
+  analyzeLearningState();
+  if(negativeText && Date.now()-state.lastEmotionCareAt>30000){
+    state.lastEmotionCareAt=Date.now();
+    state.currentTrigger='Negative language in chat';
+    analyzeLearningState();
+    openEmotionCareIntervention('negative language in chat');
+  }
   await requestAdaptiveSupport('student question',v);
 }
 $('btnSend').addEventListener('click',sendChat);
 $('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendChat();}});
+
+$('btnPoseReady').addEventListener('click',()=>setStage('solve'));
+$('btnSolveReady').addEventListener('click',()=>setStage('evaluate'));
+$('btnEvaluateReady').addEventListener('click',()=>{
+  syncStageContent();
+  prepareRevisionFields(true);
+  setStage('revise');
+});
+$('btnRestartCycle').addEventListener('click',()=>setStage('pose'));
 
 async function evaluateProblem(){
   setStage('evaluate');
@@ -623,6 +978,8 @@ async function evaluateProblem(){
   const prompt=`You are reviewing a beginner programming problem created by a student.
 Title: ${ctx.title}
 Description: ${ctx.description}
+Inputs / conditions: ${ctx.conditions}
+Expected output: ${ctx.expectedOutput}
 Reference solution: ${ctx.code}
 
 Give a short formative evaluation in simple English. Check only: (1) clarity, (2) solvability, (3) consistency between problem and solution. Use 3 short bullet points and end with one revision question. Do not rewrite the whole problem.`;
@@ -638,15 +995,44 @@ Give a short formative evaluation in simple English. Check only: (1) clarity, (2
     $('evaluationFeedback').innerHTML=marked.parse(fallback);
   }
   analyzeLearningState();
+  $('revisionFeedback').innerHTML=marked.parse(state.lastEvaluation || 'Evaluation feedback is not available yet.');
 }
 $('btnEvaluate').addEventListener('click',evaluateProblem);
 
 $('btnRevision').addEventListener('click',()=>{
+  const newTitle=$('revisedTitle').value.trim();
+  const newDesc=$('revisedDesc').value.trim();
+  const newConditions=$('revisedConditions').value.trim();
+  const newOutput=$('revisedExpectedOutput').value.trim();
+  if(newTitle) $('problemTitle').value=newTitle;
+  if(newDesc) $('problemDesc').value=newDesc;
+  if(newConditions) $('problemConditions').value=newConditions;
+  if(newOutput) $('problemExpectedOutput').value=newOutput;
   state.revisions++;
   $('metricRevisions').textContent=state.revisions;
-  setStage('revise');
-  addMsg('system',`Revision ${state.revisions} recorded. The learning-state analysis has been updated.`);
+  syncStageContent();
+  addMsg('system',`Revision ${state.revisions} saved. The Learning-State Analysis Module has been updated.`);
+  $('revisionFeedback').innerHTML='<strong>Revision saved.</strong> You can return to Pose to begin another cycle or continue refining this version.';
+  analyzeLearningState();
 });
+
+function evaluateEmotionCareTrigger(){
+  if(state.emotionCareOpen || Date.now()-state.lastEmotionCareAt<=30000) return;
+  const behavior=inferBehavior();
+  const negative=['sad','angry','fearful'].includes(state.emotion);
+  let reason='';
+
+  if(state.runErrors>=3) reason='Repeated failures';
+  else if(state.revisions>=3 && negative) reason='Repeated revisions with negative emotion';
+  else if(behavior==='Long pause' && state.attempts>0) reason='Long pause / stuck pattern';
+
+  if(reason){
+    state.lastEmotionCareAt=Date.now();
+    state.currentTrigger=reason;
+    analyzeLearningState();
+    openEmotionCareIntervention(reason.toLowerCase());
+  }
+}
 
 setInterval(()=>{
   const sec=Math.floor((Date.now()-state.startAt)/1000);
@@ -654,6 +1040,7 @@ setInterval(()=>{
   const s=String(sec%60).padStart(2,'0');
   $('metricTime').textContent=`${m}:${s}`;
   analyzeLearningState();
+  evaluateEmotionCareTrigger();
 },1000);
 
 // Initialize
