@@ -33,7 +33,6 @@
   .brand-wrap{display:flex;align-items:center;gap:12px;min-width:0}
   .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 8px 20px rgba(63,142,219,.22)}
   .brand{font-size:18px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
   .module-strip{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .module-pill{padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid}
   .m1{background:var(--teal-soft);border-color:#BFE3DD;color:#1E756B}
@@ -96,16 +95,11 @@
   .py-status{font-size:11px;color:var(--muted);margin-left:auto}
   .output{margin-top:10px;background:#0A1220;color:#DDE9FA;border-radius:10px;min-height:84px;padding:10px 12px;font-family:Consolas,Menlo,monospace;font-size:12px;white-space:pre-wrap;overflow:auto;border:1px solid #203451}
   .feedback-card{display:none;margin-top:12px;background:var(--orange-soft);border:1px solid #F0D2B6;border-radius:12px;padding:12px;color:#684122;font-size:13px;line-height:1.55}
-  .mini-flow{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-  .mini-step{padding:6px 9px;border-radius:999px;background:#F3F6FA;color:#637188;border:1px solid var(--line);font-size:11px;font-weight:700}
-  .mini-step.active{background:var(--blue-soft);color:#245C96;border-color:#BFD7F3}
 
   /* Stage-specific workspace: same system shell, different learning task */
   .stage-view{display:none;animation:stageFade .18s ease}
   .stage-view.active{display:block}
   @keyframes stageFade{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:none}}
-  .stage-section-title{font-size:13px;font-weight:850;color:var(--navy);margin:2px 0 8px}
-  .stage-section-note{font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.5}
   .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .problem-preview{border:1px solid #D8E4F2;background:#F8FBFF;border-radius:13px;padding:12px;margin-bottom:12px}
   .preview-title{font-size:15px;font-weight:850;color:var(--navy);margin-bottom:5px}
@@ -125,7 +119,6 @@
   .original-text{font-size:12px;color:#45566E;line-height:1.55;white-space:pre-wrap}
   .revision-feedback{margin-top:10px;background:#F7FAFD;border:1px solid #DCE6F2;border-radius:11px;padding:10px;font-size:12px;color:#40516B;line-height:1.5}
   .stage-nav-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap}
-  .stage-callout{border-left:4px solid var(--blue);background:var(--blue-soft);border-radius:8px;padding:9px 11px;font-size:11.5px;color:#375674;margin:8px 0 12px}
 
   @media(max-width:900px){.field-grid,.preview-meta,.revision-grid,.evaluation-grid{grid-template-columns:1fr}}
 
@@ -149,7 +142,6 @@
   .chat-input-row input{margin:0}
   .send-btn{flex:0 0 auto}
   .typing{font-size:11px;color:var(--muted);margin-top:6px;display:none}
-  .footer-note{font-size:10.5px;color:#8592A5;margin-top:8px;line-height:1.4}
 
   /* Adaptive Support Module routing — mirrors the presentation architecture */
   .support-route{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
@@ -198,7 +190,6 @@
       <div class="brand-mark">AI</div>
       <div>
         <div class="brand">Emotion-Aware Adaptive Problem-Posing & Solving System</div>
-        <div class="subtitle">Conference demo — Emotion Sensing, Learning-State Analysis, and Adaptive Support</div>
       </div>
     </div>
     <div class="module-strip" aria-label="Core system modules">
@@ -240,7 +231,7 @@
 
         <div class="status-grid">
           <div class="status-card"><div class="status-label">Facial expression</div><div class="status-value" id="emotionValue">--</div></div>
-          <div class="status-card"><div class="status-label">Confidence</div><div class="status-value" id="emotionConfidence">--</div></div>
+          <div class="status-card"><div class="status-label">Expression confidence</div><div class="status-value" id="emotionConfidence">--</div></div>
         </div>
 
         <div class="metric-list">
@@ -285,9 +276,6 @@
 
         <!-- POSE: create and clarify the problem -->
         <div class="stage-view active" id="viewPose" data-stage-view="pose">
-          <div class="stage-section-title">Build the problem</div>
-          <div class="stage-section-note">Define a meaningful situation, the conditions, and what the program should produce.</div>
-
           <label for="problemTitle">Problem title</label>
           <input id="problemTitle" type="text" value="Bus Fare Discount" placeholder="Enter a clear problem title" />
 
@@ -304,7 +292,6 @@
               <textarea id="problemExpectedOutput" rows="3" placeholder="What should the program output?">Print the final fare after applying the discount when needed.</textarea>
             </div>
           </div>
-          <div class="stage-callout">Learning Support AI can help clarify the idea, conditions, and solvability without writing the whole problem for the learner.</div>
           <div class="stage-nav-actions">
             <button class="btn btn-primary" id="btnPoseReady">Continue to Solve</button>
           </div>
@@ -312,8 +299,6 @@
 
         <!-- SOLVE: test the learner's own problem -->
         <div class="stage-view" id="viewSolve" data-stage-view="solve">
-          <div class="stage-section-title">Solve your own problem</div>
-          <div class="stage-section-note">The posed problem is shown as a reference while the learner tests whether it can actually be solved.</div>
           <div class="problem-preview">
             <div class="preview-title" id="solveProblemTitle">Bus Fare Discount</div>
             <div class="preview-desc" id="solveProblemDesc"></div>
@@ -343,8 +328,6 @@ print("Final fare:", price)</textarea>
 
         <!-- EVALUATE: inspect clarity, solvability, and consistency -->
         <div class="stage-view" id="viewEvaluate" data-stage-view="evaluate">
-          <div class="stage-section-title">Evaluate the posed problem</div>
-          <div class="stage-section-note">The system focuses attention on three quality checks before revision.</div>
           <div class="problem-preview">
             <div class="preview-title" id="evaluateProblemTitle">Bus Fare Discount</div>
             <div class="preview-desc" id="evaluateProblemDesc"></div>
@@ -365,8 +348,6 @@ print("Final fare:", price)</textarea>
 
         <!-- REVISE: compare the current version with the learner's revision -->
         <div class="stage-view" id="viewRevise" data-stage-view="revise">
-          <div class="stage-section-title">Revise and improve the problem</div>
-          <div class="stage-section-note">Use the evaluation and solving experience to improve one or more parts of the problem.</div>
           <div class="revision-grid">
             <div class="revision-card">
               <h4>Current version</h4>
@@ -394,19 +375,12 @@ print("Final fare:", price)</textarea>
           </div>
         </div>
 
-        <div class="mini-flow">
-          <span class="mini-step active" data-mini="pose">Pose</span>
-          <span class="mini-step" data-mini="solve">Solve</span>
-          <span class="mini-step" data-mini="evaluate">Evaluate</span>
-          <span class="mini-step" data-mini="revise">Revise</span>
-        </div>
       </div>
     </section>
 
     <aside class="panel support-panel">
       <div class="panel-head">
         <div>
-          <div class="panel-kicker">Core System</div>
           <div class="panel-title">Learning-State Analysis Module</div>
         </div>
       </div>
@@ -428,8 +402,7 @@ print("Final fare:", price)</textarea>
 
         <div class="analysis-title support-ai-heading">Learning Support AI</div>
         <div class="chat" id="chatBox">
-          <div class="msg system">This AI focuses on the learning task. Emotion care is handled by a separate AI that appears only when needed.</div>
-          <div class="msg ai">I can help with problem posing, solving, evaluation, and revision. I will use hints, examples, and reflection questions instead of giving the full answer.</div>
+          <div class="msg ai">I can support problem posing, solving, evaluation, and revision with hints and reflection questions.</div>
         </div>
         <div class="quick-actions">
           <button class="btn btn-ghost" data-support="hint">Hint</button>
@@ -441,7 +414,6 @@ print("Final fare:", price)</textarea>
           <button class="btn btn-primary send-btn" id="btnSend">Send</button>
         </div>
         <div class="typing" id="typing">Learning Support AI is preparing guidance…</div>
-        <div class="footer-note">The Adaptive Support Module routes regular learning support to the Learning Support AI. When a trigger condition is met, a separate Emotion Care AI appears.</div>
       </div>
     </aside>
   </main>
@@ -462,7 +434,7 @@ print("Final fare:", price)</textarea>
         <div class="care-avatar">CARE<br>AI</div>
         <div>
           <div class="care-title" id="emotionCareTitle">Emotion Care AI</div>
-          <div class="care-subtitle">Activated only when additional emotional support may be needed</div>
+          <div class="care-subtitle">Activated only when needed</div>
         </div>
       </div>
       <button class="care-close" id="btnCloseEmotionCare" title="Close">×</button>
@@ -472,12 +444,10 @@ print("Final fare:", price)</textarea>
       <span class="care-chip" id="careStageChip">Stage: --</span>
       <span class="care-chip" id="careReasonChip">Trigger condition: --</span>
     </div>
-    <div class="care-body" id="careChatBox">
-      <div class="care-msg system">The Learning Support AI remains responsible for the learning task. This separate space provides emotional check-in, encouragement, and support for returning to the task.</div>
-    </div>
+    <div class="care-body" id="careChatBox"></div>
     <div class="care-footer">
       <div class="care-input-row">
-        <input id="careInput" placeholder="Tell the Emotion Care AI how you feel or what is making the task difficult…" />
+        <input id="careInput" placeholder="What feels difficult right now?" />
         <button class="btn btn-teal" id="btnSendCare">Send</button>
       </div>
       <div class="care-actions">
@@ -580,7 +550,6 @@ function prepareRevisionFields(force=false){
 function setStage(stage){
   state.stage = stage;
   document.querySelectorAll('.stage').forEach(el=>el.classList.toggle('active', el.dataset.stage===stage));
-  document.querySelectorAll('.mini-step').forEach(el=>el.classList.toggle('active', el.dataset.mini===stage));
   document.querySelectorAll('[data-stage-view]').forEach(el=>el.classList.toggle('active',el.dataset.stageView===stage));
   $('stageBadge').textContent = 'Stage: ' + cap(stage);
   $('workspaceTitle').textContent = stages[stage].title;
@@ -896,7 +865,7 @@ async function openEmotionCareIntervention(reason='emotion signal'){
   $('careStageChip').textContent=`Stage: ${cap(ctx.stage)}`;
   $('careReasonChip').textContent=`Trigger condition: ${reason}`;
   $('emotionCareOverlay').classList.add('show');
-  $('careChatBox').innerHTML='<div class="care-msg system">The Learning Support AI remains responsible for the learning task. This separate space provides emotional check-in, encouragement, and support for returning to the task.</div>';
+  $('careChatBox').innerHTML='';
   $('careThinking').style.display='inline';
   try{
     const reply=await callEmotionCareAI(ctx,reason);
