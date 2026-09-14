@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emotion-Aware Adaptive Problem-Posing & Solving System</title>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root{
+    --navy:#173A6B;
+    --blue:#3F8EDB;
+    --blue-soft:#EEF6FF;
+    --teal:#2A9D8F;
+    --teal-soft:#EEF9F7;
+    --orange:#E08A3E;
+    --orange-soft:#FFF6ED;
+    --coral:#D96A5E;
+    --coral-soft:#FFF1EF;
+    --ink:#1F2A44;
+    --muted:#68748A;
+    --line:#D9E4F2;
+    --bg:#F6F9FD;
+    --card:#FFFFFF;
+    --shadow:0 14px 35px rgba(36,78,131,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#F9FBFE 0%,#F3F7FC 100%);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;min-height:100vh}
+  button,input,textarea{font:inherit}
+  .app{min-height:100vh;display:flex;flex-direction:column}
+  .topbar{background:#fff;border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;position:sticky;top:0;z-index:20}
+  .brand-wrap{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 8px 20px rgba(63,142,219,.22)}
+  .brand{font-size:18px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+  .module-strip{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .module-pill{padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid}
+  .m1{background:var(--teal-soft);border-color:#BFE3DD;color:#1E756B}
+  .m2{background:var(--blue-soft);border-color:#C6DCF7;color:#2D6DAE}
+  .m3{background:var(--orange-soft);border-color:#F3D3B5;color:#A85E22}
+
+  .stagebar{padding:12px 22px 4px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:1200px;width:100%;margin:0 auto}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.2s;min-width:0}
+  .stage:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(36,78,131,.08)}
+  .stage.active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(63,142,219,.12)}
+  .stage-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--blue-soft);color:var(--navy);font-weight:800;flex:0 0 auto}
+  .stage.active .stage-num{background:var(--blue);color:#fff}
+  .stage-label{font-weight:800;font-size:13px;color:var(--navy)}
+  .stage-hint{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .layout{width:100%;max-width:1500px;margin:0 auto;padding:12px 22px 22px;display:grid;grid-template-columns:300px minmax(0,1fr) 390px;gap:14px;flex:1;min-height:0}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);min-height:0;overflow:hidden}
+  .panel-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .panel-title{font-weight:800;color:var(--navy)}
+  .panel-kicker{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .panel-body{padding:14px 16px}
+
+  /* Emotion sensing */
+  .camera-frame{position:relative;background:#09111F;border-radius:14px;overflow:hidden;aspect-ratio:4/3;border:1px solid #C9D8EC}
+  #camera{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+  .cam-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#A9B8CA;font-size:13px;background:radial-gradient(circle at center,#16253D,#09111F)}
+  .cam-overlay{position:absolute;left:10px;bottom:10px;right:10px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .live-badge,.emo-chip{background:rgba(10,21,38,.78);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:700}
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#FF5A5F;margin-right:5px}
+  .btn-row{display:flex;gap:8px;margin-top:10px}
+  .btn{border:none;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;transition:.18s}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover{background:#204E8E}
+  .btn-ghost{background:#F3F6FA;color:var(--navy);border:1px solid var(--line)}
+  .btn-teal{background:var(--teal);color:#fff}
+  .btn-orange{background:var(--orange);color:#fff}
+  .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .status-card{border-radius:12px;padding:10px;border:1px solid var(--line);background:#FBFCFE}
+  .status-label{font-size:11px;color:var(--muted);margin-bottom:3px}
+  .status-value{font-size:16px;font-weight:800;color:var(--navy)}
+  .metric-list{margin-top:12px;display:grid;gap:7px}
+  .metric{display:flex;justify-content:space-between;gap:8px;font-size:12px;border-bottom:1px dashed #E6EDF6;padding-bottom:6px}
+  .metric span:last-child{font-weight:800;color:var(--navy)}
+  details.demo{margin-top:12px;border:1px dashed #D5DFEC;border-radius:10px;padding:9px;background:#FAFCFF}
+  details.demo summary{cursor:pointer;font-size:12px;font-weight:700;color:#5C6B80}
+  .demo-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .demo-btns button{font-size:11px;padding:6px 8px}
+
+  /* Workspace */
+  .workspace-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .workspace-title{font-size:20px;font-weight:850;color:var(--navy)}
+  .workspace-note{font-size:12px;color:var(--muted);margin-top:4px;max-width:680px}
+  .need-badge{background:var(--blue-soft);color:#285F9A;border:1px solid #C7DBF3;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;white-space:nowrap}
+  label{display:block;font-size:12px;color:#41526B;font-weight:800;margin:10px 0 6px}
+  input,textarea{width:100%;border:1px solid #CBD8E8;background:#FBFDFF;border-radius:10px;padding:10px 11px;color:var(--ink);outline:none;transition:.18s}
+  input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(63,142,219,.10)}
+  textarea{resize:vertical}
+  .editor{font-family:Consolas,Menlo,monospace;min-height:170px;background:#0E1728;color:#DFE9F7;border-color:#263B5B;line-height:1.5}
+  .workspace-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .py-status{font-size:11px;color:var(--muted);margin-left:auto}
+  .output{margin-top:10px;background:#0A1220;color:#DDE9FA;border-radius:10px;min-height:84px;padding:10px 12px;font-family:Consolas,Menlo,monospace;font-size:12px;white-space:pre-wrap;overflow:auto;border:1px solid #203451}
+  .feedback-card{display:none;margin-top:12px;background:var(--orange-soft);border:1px solid #F0D2B6;border-radius:12px;padding:12px;color:#684122;font-size:13px;line-height:1.55}
+  .mini-flow{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .mini-step{padding:6px 9px;border-radius:999px;background:#F3F6FA;color:#637188;border:1px solid var(--line);font-size:11px;font-weight:700}
+  .mini-step.active{background:var(--blue-soft);color:#245C96;border-color:#BFD7F3}
+
+  /* Analysis + support */
+  .analysis-box{background:linear-gradient(135deg,#F5FAFF,#F7FCFB);border:1px solid #D6E8F5;border-radius:14px;padding:12px;margin-bottom:12px}
+  .analysis-title{font-size:12px;font-weight:850;color:var(--navy);margin-bottom:9px}
+  .signal-row{display:grid;grid-template-columns:110px 1fr;gap:8px;font-size:12px;margin:6px 0}
+  .signal-row .key{color:var(--muted)}
+  .signal-row .val2{font-weight:700;color:var(--ink)}
+  .need-box{margin-top:10px;background:#fff;border:1px solid #DDE7F1;border-radius:10px;padding:9px}
+  .need-box strong{display:block;color:var(--navy);font-size:12px;margin-bottom:3px}
+  .need-box span{font-size:13px;color:#3E4D64}
+  .chat{height:330px;overflow:auto;background:#F7FAFD;border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+  .msg{max-width:90%;padding:9px 11px;border-radius:12px;font-size:12.5px;line-height:1.5}
+  .msg.ai{align-self:flex-start;background:#fff;border:1px solid #D7E4F2;border-top-left-radius:3px;color:#2C3D57}
+  .msg.user{align-self:flex-end;background:#EAF4FF;border:1px solid #C4DCF7;border-top-right-radius:3px;color:#234B76}
+  .msg.system{align-self:center;background:#F3F7FA;color:#728096;font-size:11px;max-width:100%}
+  .quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+  .quick-actions button{padding:8px 5px;font-size:11px}
+  .chat-input-row{display:flex;gap:7px;margin-top:8px}
+  .chat-input-row input{margin:0}
+  .send-btn{flex:0 0 auto}
+  .typing{font-size:11px;color:var(--muted);margin-top:6px;display:none}
+  .footer-note{font-size:10.5px;color:#8592A5;margin-top:8px;line-height:1.4}
+
+  @media(max-width:1180px){.layout{grid-template-columns:280px minmax(0,1fr)}.support-panel{grid-column:1/-1}.chat{height:250px}.module-strip{display:none}}
+  @media(max-width:780px){.layout{grid-template-columns:1fr;padding:10px}.stagebar{grid-template-columns:1fr 1fr;padding:10px}.topbar{padding:12px}.brand{font-size:15px}.monitor-panel,.support-panel{grid-column:auto}.status-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark">AI</div>
+      <div>
+        <div class="brand">Emotion-Aware Adaptive Problem-Posing & Solving System</div>
+        <div class="subtitle">Conference demo — focused on emotion sensing, learning-state analysis, and adaptive support</div>
+      </div>
+    </div>
+    <div class="module-strip" aria-label="Core system modules">
+      <div class="module-pill m1">1. Emotion Sensing</div>
+      <div class="module-pill m2">2. Learning-State Analysis</div>
+      <div class="module-pill m3">3. Adaptive Support</div>
+    </div>
+  </header>
+
+  <div class="stagebar" id="stageBar">
+    <div class="stage active" data-stage="pose"><div class="stage-num">1</div><div><div class="stage-label">Pose</div><div class="stage-hint">Create a meaningful problem</div></div></div>
+    <div class="stage" data-stage="solve"><div class="stage-num">2</div><div><div class="stage-label">Solve</div><div class="stage-hint">Test whether it works</div></div></div>
+    <div class="stage" data-stage="evaluate"><div class="stage-num">3</div><div><div class="stage-label">Evaluate</div><div class="stage-hint">Check quality and solvability</div></div></div>
+    <div class="stage" data-stage="revise"><div class="stage-num">4</div><div><div class="stage-label">Revise</div><div class="stage-hint">Improve the problem</div></div></div>
+  </div>
+
+  <main class="layout">
+    <aside class="panel monitor-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-kicker">Module 1</div>
+          <div class="panel-title">Emotion Sensing</div>
+        </div>
+        <span id="modelStatus" style="font-size:11px;color:#8996A8">Model idle</span>
+      </div>
+      <div class="panel-body">
+        <div class="camera-frame">
+          <video id="camera" autoplay muted playsinline></video>
+          <div class="cam-placeholder" id="camPlaceholder">Camera is off</div>
+          <div class="cam-overlay">
+            <div class="live-badge"><span class="live-dot"></span>LIVE CAMERA</div>
+            <div class="emo-chip" id="camEmotion">Expression: --</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnStartCamera">Start Camera</button>
+          <button class="btn btn-ghost" id="btnStopCamera">Stop</button>
+        </div>
+
+        <div class="status-grid">
+          <div class="status-card"><div class="status-label">Facial expression</div><div class="status-value" id="emotionValue">--</div></div>
+          <div class="status-card"><div class="status-label">Confidence</div><div class="status-value" id="emotionConfidence">--</div></div>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric"><span>Current stage</span><span id="metricStage">Pose</span></div>
+          <div class="metric"><span>Run attempts</span><span id="metricAttempts">0</span></div>
+          <div class="metric"><span>Revisions</span><span id="metricRevisions">0</span></div>
+          <div class="metric"><span>Time on task</span><span id="metricTime">00:00</span></div>
+          <div class="metric"><span>Interaction state</span><span id="metricInteraction">Normal</span></div>
+        </div>
+
+        <details class="demo">
+          <summary>Presenter fallback controls</summary>
+          <div class="demo-btns">
+            <button class="btn btn-ghost" data-sim="neutral">Neutral</button>
+            <button class="btn btn-ghost" data-sim="sad">Sad</button>
+            <button class="btn btn-ghost" data-sim="angry">Angry</button>
+            <button class="btn btn-ghost" data-sim="fearful">Fearful</button>
+            <button class="btn btn-ghost" data-sim="happy">Happy</button>
+          </div>
+        </details>
+      </div>
+    </aside>
+
+    <section class="panel workspace-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-kicker">Learner Workspace</div>
+          <div class="panel-title">Problem-Posing & Solving</div>
+        </div>
+        <span class="need-badge" id="stageBadge">Stage: Pose</span>
+      </div>
+      <div class="panel-body">
+        <div class="workspace-header">
+          <div>
+            <div class="workspace-title" id="workspaceTitle">Create a meaningful programming problem</div>
+            <div class="workspace-note" id="workspaceNote">Start with a clear situation, define the conditions, and make sure the problem can be solved.</div>
+          </div>
+        </div>
+
+        <label for="problemTitle">Problem title</label>
+        <input id="problemTitle" type="text" value="Bus Fare Discount" placeholder="Enter a clear problem title" />
+
+        <label for="problemDesc">Problem description</label>
+        <textarea id="problemDesc" rows="5" placeholder="Describe the problem situation, inputs, and expected output.">A bus company gives a 20% discount to passengers aged 65 or older. Ask the user for age and ticket price, then print the final fare.</textarea>
+
+        <label for="codeEditor">Reference solution / solving attempt (Python)</label>
+        <textarea id="codeEditor" class="editor" spellcheck="false">age = int(input("Age: "))
+price = float(input("Ticket price: "))
+
+if age >= 65:
+    price = price * 0.8
+
+print("Final fare:", price)</textarea>
+
+        <div class="workspace-actions">
+          <button class="btn btn-primary" id="btnRun">Run Python</button>
+          <button class="btn btn-teal" id="btnEvaluate">Evaluate Problem</button>
+          <button class="btn btn-orange" id="btnRevision">Mark as Revised</button>
+          <span class="py-status" id="pyStatus">Python engine loading…</span>
+        </div>
+        <div class="output" id="output">Output will appear here.</div>
+        <div class="feedback-card" id="evaluationFeedback"></div>
+
+        <div class="mini-flow">
+          <span class="mini-step active" data-mini="pose">Pose</span>
+          <span class="mini-step" data-mini="solve">Solve</span>
+          <span class="mini-step" data-mini="evaluate">Evaluate</span>
+          <span class="mini-step" data-mini="revise">Revise</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel support-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-kicker">Modules 2 & 3</div>
+          <div class="panel-title">Learning-State Analysis & Adaptive Support</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="analysis-box">
+          <div class="analysis-title">Current Learning-State Analysis</div>
+          <div class="signal-row"><div class="key">Learning stage</div><div class="val2" id="analysisStage">Pose</div></div>
+          <div class="signal-row"><div class="key">Learning progress</div><div class="val2" id="analysisProgress">Problem draft in progress</div></div>
+          <div class="signal-row"><div class="key">Facial expression</div><div class="val2" id="analysisEmotion">Not detected</div></div>
+          <div class="signal-row"><div class="key">Interaction pattern</div><div class="val2" id="analysisBehavior">Normal</div></div>
+          <div class="need-box"><strong>Current learning need</strong><span id="analysisNeed">Problem-posing scaffold</span></div>
+        </div>
+
+        <div class="analysis-title">Adaptive AI Support</div>
+        <div class="chat" id="chatBox">
+          <div class="msg system">The system combines learning progress with emotional state to decide the next support strategy.</div>
+          <div class="msg ai">I’m ready to support your problem-posing and solving process. I will avoid giving the full answer and focus on hints, questions, feedback, and encouragement.</div>
+        </div>
+        <div class="quick-actions">
+          <button class="btn btn-ghost" data-support="hint">Hint</button>
+          <button class="btn btn-ghost" data-support="reflect">Reflect</button>
+          <button class="btn btn-ghost" data-support="encourage">Encourage</button>
+        </div>
+        <div class="chat-input-row">
+          <input id="chatInput" placeholder="Ask the AI tutor…" />
+          <button class="btn btn-primary send-btn" id="btnSend">Send</button>
+        </div>
+        <div class="typing" id="typing">AI tutor is adapting its response…</div>
+        <div class="footer-note">Live facial-expression recognition uses face-api.js. The camera stays in the browser; only the inferred expression label is used as context for adaptive support.</div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzkAH1B96FAMUhSf-n6ET5x8h8BXtXpxgIApmQraqk39rIZOhgUuOi94zmy1AuZMXAqXg/exec";
+const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
+
+const state = {
+  stage: 'pose',
+  emotion: 'not detected',
+  emotionConfidence: 0,
+  attempts: 0,
+  revisions: 0,
+  runErrors: 0,
+  keypresses: 0,
+  backspaces: 0,
+  lastInputAt: Date.now(),
+  startAt: Date.now(),
+  cameraStream: null,
+  modelReady: false,
+  monitorTimer: null,
+  pyodide: null,
+  pyReady: false,
+  lastAutoSupportAt: 0,
+  negativeEmotionStreak: 0,
+  simulatedEmotion: null,
+  lastEvaluation: '',
+  chatHistory: []
+};
+
+const $ = id => document.getElementById(id);
+const stages = {
+  pose: {
+    title:'Create a meaningful programming problem',
+    note:'Start with a clear situation, define the conditions, and make sure the problem can be solved.'
+  },
+  solve: {
+    title:'Solve your own problem',
+    note:'Run or inspect the reference solution to check whether the problem really works.'
+  },
+  evaluate: {
+    title:'Evaluate clarity and solvability',
+    note:'Check whether the problem statement, conditions, and solution are consistent.'
+  },
+  revise: {
+    title:'Revise and improve the problem',
+    note:'Use feedback to improve the clues, conditions, solution, or difficulty.'
+  }
+};
+
+function setStage(stage){
+  state.stage = stage;
+  document.querySelectorAll('.stage').forEach(el=>el.classList.toggle('active', el.dataset.stage===stage));
+  document.querySelectorAll('.mini-step').forEach(el=>el.classList.toggle('active', el.dataset.mini===stage));
+  $('stageBadge').textContent = 'Stage: ' + cap(stage);
+  $('workspaceTitle').textContent = stages[stage].title;
+  $('workspaceNote').textContent = stages[stage].note;
+  $('metricStage').textContent = cap(stage);
+  analyzeLearningState();
+}
+
+function cap(s){return s ? s.charAt(0).toUpperCase()+s.slice(1) : ''}
+
+document.querySelectorAll('.stage').forEach(el=>el.addEventListener('click',()=>setStage(el.dataset.stage)));
+
+document.addEventListener('keydown', e=>{
+  state.keypresses++;
+  if(e.key==='Backspace') state.backspaces++;
+  state.lastInputAt = Date.now();
+});
+document.addEventListener('input',()=>{ state.lastInputAt = Date.now(); analyzeLearningState(); });
+
+function inferLearningProgress(){
+  const title = $('problemTitle').value.trim();
+  const desc = $('problemDesc').value.trim();
+  const code = $('codeEditor').value.trim();
+  if(state.stage==='pose'){
+    if(!title || desc.length<35) return 'Problem draft needs more detail';
+    return 'Problem draft is formed';
+  }
+  if(state.stage==='solve'){
+    if(state.attempts===0) return 'Solution not tested yet';
+    return state.runErrors>0 ? 'Testing revealed an issue' : 'Solution has been tested';
+  }
+  if(state.stage==='evaluate') return state.lastEvaluation ? 'Problem has been evaluated' : 'Evaluation is pending';
+  return state.revisions>0 ? 'Problem has been revised' : 'Revision is pending';
+}
+
+function inferBehavior(){
+  const idle = (Date.now()-state.lastInputAt)/1000;
+  if(state.runErrors>=2) return 'Repeated unsuccessful attempts';
+  if(state.backspaces>=10) return 'Frequent editing';
+  if(idle>50) return 'Long pause';
+  return 'Normal';
+}
+
+function inferNeed(){
+  const emotion = state.emotion;
+  const behavior = inferBehavior();
+  const title = $('problemTitle').value.trim();
+  const desc = $('problemDesc').value.trim();
+
+  if(['angry','sad','fearful'].includes(emotion) && (state.runErrors>=1 || behavior!=='Normal')) return 'Affective + strategic support';
+  if(['sad','fearful'].includes(emotion)) return 'Gentle scaffold + encouragement';
+  if(emotion==='angry') return 'Short, step-by-step support';
+  if(state.stage==='pose'){
+    if(!title || desc.length<35) return 'Idea generation and condition clarification';
+    return 'Check clarity and solvability';
+  }
+  if(state.stage==='solve') return state.runErrors>0 ? 'Debugging guidance' : 'Check whether the problem works';
+  if(state.stage==='evaluate') return 'Evaluation and reflection prompts';
+  return 'Revision guidance';
+}
+
+function analyzeLearningState(){
+  const progress = inferLearningProgress();
+  const behavior = inferBehavior();
+  const need = inferNeed();
+  $('analysisStage').textContent = cap(state.stage);
+  $('analysisProgress').textContent = progress;
+  $('analysisEmotion').textContent = state.emotion==='not detected' ? 'Not detected' : cap(state.emotion) + (state.emotionConfidence ? ` (${Math.round(state.emotionConfidence*100)}%)` : '');
+  $('analysisBehavior').textContent = behavior;
+  $('analysisNeed').textContent = need;
+  $('metricInteraction').textContent = behavior;
+  return {progress,behavior,need};
+}
+
+async function loadModels(){
+  $('modelStatus').textContent = 'Loading model…';
+  try{
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+    ]);
+    state.modelReady = true;
+    $('modelStatus').textContent = 'Model ready';
+  }catch(err){
+    $('modelStatus').textContent = 'Model unavailable';
+    console.error(err);
+  }
+}
+
+async function startCamera(){
+  if(!state.modelReady) await loadModels();
+  try{
+    state.cameraStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    $('camera').srcObject = state.cameraStream;
+    $('camPlaceholder').style.display='none';
+    if(state.monitorTimer) clearInterval(state.monitorTimer);
+    state.monitorTimer = setInterval(monitorEmotion, 900);
+  }catch(err){
+    $('camPlaceholder').textContent = 'Camera permission is required';
+    $('camPlaceholder').style.display='grid';
+    console.error(err);
+  }
+}
+
+function stopCamera(){
+  if(state.monitorTimer){clearInterval(state.monitorTimer);state.monitorTimer=null;}
+  if(state.cameraStream){state.cameraStream.getTracks().forEach(t=>t.stop());state.cameraStream=null;}
+  $('camera').srcObject=null;
+  $('camPlaceholder').textContent='Camera is off';
+  $('camPlaceholder').style.display='grid';
+}
+
+async function monitorEmotion(){
+  if(state.simulatedEmotion){
+    updateEmotion(state.simulatedEmotion, .92, true);
+    return;
+  }
+  if(!state.modelReady || !$('camera').srcObject || $('camera').readyState < 2) return;
+  try{
+    const result = await faceapi.detectSingleFace($('camera'), new faceapi.TinyFaceDetectorOptions({inputSize:224,scoreThreshold:.45})).withFaceExpressions();
+    if(!result){
+      updateEmotion('not detected',0,false);
+      return;
+    }
+    const [label,score] = Object.entries(result.expressions).sort((a,b)=>b[1]-a[1])[0];
+    updateEmotion(label,score,false);
+  }catch(err){console.warn('Face monitor error',err)}
+}
+
+function updateEmotion(label,score,simulated){
+  state.emotion = label;
+  state.emotionConfidence = score;
+  $('emotionValue').textContent = label==='not detected' ? '--' : cap(label);
+  $('emotionConfidence').textContent = score ? Math.round(score*100)+'%' : '--';
+  $('camEmotion').textContent = label==='not detected' ? 'Expression: --' : `Expression: ${cap(label)}${simulated?' (demo)':''}`;
+  const negative = ['sad','angry','fearful'].includes(label);
+  state.negativeEmotionStreak = negative ? state.negativeEmotionStreak+1 : 0;
+  analyzeLearningState();
+  if(state.negativeEmotionStreak>=4 && Date.now()-state.lastAutoSupportAt>30000){
+    state.lastAutoSupportAt = Date.now();
+    requestAdaptiveSupport('auto');
+  }
+}
+
+$('btnStartCamera').addEventListener('click', startCamera);
+$('btnStopCamera').addEventListener('click', stopCamera);
+document.querySelectorAll('[data-sim]').forEach(btn=>btn.addEventListener('click',()=>{
+  state.simulatedEmotion = btn.dataset.sim;
+  updateEmotion(state.simulatedEmotion,.92,true);
+}));
+
+async function initPython(){
+  try{
+    state.pyodide = await loadPyodide();
+    state.pyReady = true;
+    $('pyStatus').textContent = 'Python engine ready';
+  }catch(err){
+    $('pyStatus').textContent = 'Python engine unavailable';
+    console.error(err);
+  }
+}
+
+async function runPython(){
+  setStage('solve');
+  state.attempts++;
+  $('metricAttempts').textContent = state.attempts;
+  $('output').textContent = 'Running…\n';
+  if(!state.pyReady){ $('output').textContent += 'Python is still loading.'; return; }
+  const code = $('codeEditor').value;
+  try{
+    let buffer = '';
+    state.pyodide.setStdout({batched: msg=>{buffer += msg+'\n'; $('output').textContent=buffer;}});
+    const override = `
+import js, builtins
+
+def custom_input(prompt_text=""):
+    val = js.prompt(prompt_text if prompt_text else "Python input:")
+    if val is None:
+        raise KeyboardInterrupt("Input cancelled")
+    return str(val)
+
+builtins.input = custom_input
+`;
+    await state.pyodide.runPythonAsync(override);
+    await state.pyodide.runPythonAsync(code);
+    state.runErrors = 0;
+    if(!buffer) buffer='[Program finished with no printed output]\n';
+    $('output').textContent = buffer + '\n[Run completed]';
+  }catch(err){
+    state.runErrors++;
+    $('output').textContent += '\nError:\n'+err;
+  }
+  analyzeLearningState();
+}
+$('btnRun').addEventListener('click',runPython);
+
+function contextSnapshot(){
+  const analysis = analyzeLearningState();
+  return {
+    stage: state.stage,
+    emotion: state.emotion,
+    confidence: state.emotionConfidence,
+    attempts: state.attempts,
+    revisions: state.revisions,
+    runErrors: state.runErrors,
+    behavior: analysis.behavior,
+    progress: analysis.progress,
+    need: analysis.need,
+    title: $('problemTitle').value.trim(),
+    description: $('problemDesc').value.trim(),
+    code: $('codeEditor').value.trim()
+  };
+}
+
+function addMsg(role,text){
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  if(role==='ai') div.innerHTML=marked.parse(text);
+  else div.textContent=text;
+  $('chatBox').appendChild(div);
+  $('chatBox').scrollTop=$('chatBox').scrollHeight;
+}
+
+function localFallback(intent,ctx){
+  if(intent==='encourage' || ['sad','fearful','angry'].includes(ctx.emotion)){
+    return `You are still making progress. Let’s focus on one small step first: ${ctx.stage==='pose'?'check whether the problem has a clear input and output':ctx.stage==='solve'?'test one simple case':ctx.stage==='evaluate'?'check one condition at a time':'revise only one part before changing anything else'}.`;
+  }
+  if(ctx.stage==='pose') return 'Try checking three things: What is the input? What should the program output? Can a classmate solve the problem from your description alone?';
+  if(ctx.stage==='solve') return 'Test a simple case first. If the result is wrong, compare the expected output with the value your code actually produces.';
+  if(ctx.stage==='evaluate') return 'Check whether the title, conditions, solution, and expected output all describe the same task. Which part is still unclear?';
+  return 'Revise one element at a time. Start with the condition or clue that caused the most difficulty during solving.';
+}
+
+async function callAdaptiveAI(prompt){
+  const messages=[{role:'user',parts:[{text:prompt}]}];
+  const res=await fetch(GAS_URL,{method:'POST',mode:'cors',body:JSON.stringify({type:'CALL_GEMINI_CHAT',messages})});
+  const json=await res.json();
+  if(!json || !json.text) throw new Error('No AI response');
+  return json.text;
+}
+
+async function requestAdaptiveSupport(intent='auto',userText=''){
+  const ctx=contextSnapshot();
+  $('typing').style.display='block';
+  const prompt=`You are an emotion-aware adaptive tutor for beginner university programming students.
+Current learning stage: ${ctx.stage}
+Current learning progress: ${ctx.progress}
+Detected facial expression: ${ctx.emotion} (confidence ${Math.round(ctx.confidence*100)}%)
+Interaction pattern: ${ctx.behavior}
+Current inferred learning need: ${ctx.need}
+Run attempts: ${ctx.attempts}; run errors: ${ctx.runErrors}; revisions: ${ctx.revisions}
+Problem title: ${ctx.title}
+Problem description: ${ctx.description}
+Student code: ${ctx.code}
+Support request: ${intent}
+Student message: ${userText || '(none)'}
+
+Give ONE short adaptive response in simple English, maximum 55 words. Do not give a complete solution. Choose the support style based on both learning progress and emotional state. Use a guiding question, a small hint, reflection prompt, or brief encouragement as appropriate.`;
+  try{
+    const reply=await callAdaptiveAI(prompt);
+    addMsg('ai',reply);
+  }catch(err){
+    addMsg('ai',localFallback(intent,ctx));
+    console.warn('AI fallback used',err);
+  }finally{
+    $('typing').style.display='none';
+  }
+}
+
+document.querySelectorAll('[data-support]').forEach(btn=>btn.addEventListener('click',()=>requestAdaptiveSupport(btn.dataset.support)));
+
+async function sendChat(){
+  const v=$('chatInput').value.trim();
+  if(!v) return;
+  $('chatInput').value='';
+  addMsg('user',v);
+  await requestAdaptiveSupport('student question',v);
+}
+$('btnSend').addEventListener('click',sendChat);
+$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendChat();}});
+
+async function evaluateProblem(){
+  setStage('evaluate');
+  const ctx=contextSnapshot();
+  const prompt=`You are reviewing a beginner programming problem created by a student.
+Title: ${ctx.title}
+Description: ${ctx.description}
+Reference solution: ${ctx.code}
+
+Give a short formative evaluation in simple English. Check only: (1) clarity, (2) solvability, (3) consistency between problem and solution. Use 3 short bullet points and end with one revision question. Do not rewrite the whole problem.`;
+  $('evaluationFeedback').style.display='block';
+  $('evaluationFeedback').textContent='Evaluating…';
+  try{
+    const reply=await callAdaptiveAI(prompt);
+    state.lastEvaluation=reply;
+    $('evaluationFeedback').innerHTML=marked.parse(reply);
+  }catch(err){
+    const fallback='• The problem has a clear real-life situation.\n• Check whether the input and output are stated explicitly.\n• Make sure the reference solution matches every condition.\n\nRevision question: What information would a classmate still need before solving it?';
+    state.lastEvaluation=fallback;
+    $('evaluationFeedback').innerHTML=marked.parse(fallback);
+  }
+  analyzeLearningState();
+}
+$('btnEvaluate').addEventListener('click',evaluateProblem);
+
+$('btnRevision').addEventListener('click',()=>{
+  state.revisions++;
+  $('metricRevisions').textContent=state.revisions;
+  setStage('revise');
+  addMsg('system',`Revision ${state.revisions} recorded. The learning-state analysis has been updated.`);
+});
+
+setInterval(()=>{
+  const sec=Math.floor((Date.now()-state.startAt)/1000);
+  const m=String(Math.floor(sec/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
+  $('metricTime').textContent=`${m}:${s}`;
+  analyzeLearningState();
+},1000);
+
+// Initialize
+setStage('pose');
+loadModels();
+initPython();
+</script>
+</body>
+</html>
